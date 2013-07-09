@@ -16,10 +16,22 @@ ordering.
 
 >>> [((1 + sqrt 5)/2)^n - ((1 - sqrt 5)/2)^n :: Construct | n <- [1..10]]
 [sqrt 5,sqrt 5,2*sqrt 5,3*sqrt 5,5*sqrt 5,8*sqrt 5,13*sqrt 5,21*sqrt 5,34*sqrt 5,55*sqrt 5]
+
 >>> let f (a, b, t, p) = ((a + b)/2, sqrt (a*b), t - p*((a - b)/2)^2, 2*p)
 >>> let (a, b, t, p) = f . f . f . f $ (1, 1/sqrt 2, 1/4, 1 :: Construct)
 >>> floor $ ((a + b)^2/(4*t))*10**40
 31415926535897932384626433832795028841971
+
+>>> let qf (p, q) = ((p + sqrt (p^2 - 4*q))/2, (p - sqrt (p^2 - 4*q))/2 :: Construct)
+>>> let [(v, w), (x, _), (y, _), (z, _)] = map qf [(-1, -4), (v, -1), (w, -1), (x, y)]
+>>> z/2
+-1/16 + 1/16*sqrt 17 + 1/8*sqrt (17/2 - 1/2*sqrt 17) + 1/4*sqrt (17/4 + 3/4*sqrt 17 - (3/4 + 1/4*sqrt 17)*sqrt (17/2 - 1/2*sqrt 17))
+
+Constructible complex numbers may be built from constructible reals
+using 'Complex' from the complex-generic library.
+
+>>> (z/2 :+ sqrt (1 - (z/2)^2))^17
+1 :+ 0
 -}
 
 module Data.Real.Constructible (
@@ -30,6 +42,8 @@ module Data.Real.Constructible (
 
 import Control.Applicative ((<$>), (<*>), (<|>), empty)
 import Control.Exception (Exception, ArithException (..), throw)
+import Data.Complex.Generic (Complex (..))
+import Data.Complex.Generic.TH (deriveComplexF)
 import Data.Ratio ((%), numerator, denominator)
 import Data.Typeable (Typeable)
 import Math.NumberTheory.Powers.Squares (exactSquareRoot)
@@ -363,6 +377,14 @@ instance Enum Construct where
   enumFromThenTo e1 e2 e3 = takeWhile predicate (enumFromThen e1 e2) where
     predicate | e2 >= e1 = (<= e3)
               | otherwise = (>= e3)
+
+mk :: a -> a -> Complex a
+mk = (:+)
+
+toPair :: Complex a -> (a, a)
+toPair (x :+ y) = (x, y)
+
+deriveComplexF ''Complex ''Construct 'mk 'toPair
 
 {- |
 Evaluate a floating-point approximation for a constructible number.

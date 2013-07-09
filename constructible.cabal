@@ -21,12 +21,16 @@ library
   extensions:
     DataKinds,
     DeriveDataTypeable,
+    FlexibleInstances,
     GADTs,
+    MultiParamTypeClasses,
+    TemplateHaskell,
     TypeFamilies
   build-depends:
     arithmoi >=0.1,
     base ==4.*,
-    binary-search >=0.0
+    binary-search >=0.0,
+    complex-generic >=0.1
   ghc-options:       -Wall
 
 source-repository head
