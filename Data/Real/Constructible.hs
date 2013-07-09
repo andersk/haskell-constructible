@@ -1,3 +1,12 @@
+{-# LANGUAGE
+  DataKinds,
+  DeriveDataTypeable,
+  FlexibleInstances,
+  GADTs,
+  MultiParamTypeClasses,
+  TemplateHaskell,
+  TypeFamilies #-}
+
 {- |
 Module      :  Data.Real.Constructible
 Description :  Constructible real numbers

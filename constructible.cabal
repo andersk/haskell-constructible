@@ -18,14 +18,6 @@ cabal-version:       >=1.8
 
 library
   exposed-modules:     Data.Real.Constructible
-  extensions:
-    DataKinds,
-    DeriveDataTypeable,
-    FlexibleInstances,
-    GADTs,
-    MultiParamTypeClasses,
-    TemplateHaskell,
-    TypeFamilies
   build-depends:
     arithmoi >=0.1,
     base ==4.*,
