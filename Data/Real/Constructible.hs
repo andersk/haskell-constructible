@@ -211,23 +211,30 @@ showsPrecK (Sqrt k r) d (SqrtElt a b) = case sgnK k b of
   LT | isZeroK k a -> negateS (mulSqrtS k (negateK k b) r) d
      | otherwise -> (flip (showsPrecK k) a -! mulSqrtS k (negateK k b) r) d
 
-fromConstructK :: Floating a => Field k -> Elt k -> a
-fromConstructK Q = fromRational
-fromConstructK kr@(Sqrt k r) = er where
-  e = fromConstructK k
-  s = sqrt (e r)
-  er SqrtZero = 0
-  er x@(SqrtElt a b) = case (sgnK k a, sgnK k b) of
-    (_, EQ) -> e a
-    (EQ, _) -> e b*s
+fromRatioK :: Floating a => Field k -> Elt k -> Elt k -> a
+fromRatioK Q = \a b -> fromRational (a/b)
+fromRatioK (Sqrt k r) = er where
+  e = fromRatioK k
+  s = sqrt (e r (fromRationalK k 1))
+  er SqrtZero _ = 0
+  er _ SqrtZero = throw DivideByZero
+  er (SqrtElt a0 b0) (SqrtElt a1 b1) = case (sgnK k a, sgnK k b) of
+    (_, EQ) -> e a n1
+    (EQ, _) -> e b n1*s
     (GT, GT) -> x1
     (LT, LT) -> x1
     (GT, LT) -> x2
     (LT, GT) -> x2
     where
-      x1 = e a + e b*s
-      SqrtElt c d = recipK kr x
-      x2 = recip $ e c + e d*s
+      a = subK k (mulK k a0 a1) (mulK k r (mulK k b0 b1))
+      b = subK k (mulK k b0 a1) (mulK k a0 b1)
+      n0 = subK k (mulK k a0 a0) (mulK k r (mulK k b0 b0))
+      n1 = subK k (mulK k a1 a1) (mulK k r (mulK k b1 b1))
+      x1 = e a n1 + e b n1*s
+      x2 = recip $ e a n0 - e b n0*s
+
+fromConstructK :: Floating a => Field k -> Elt k -> a
+fromConstructK k a = fromRatioK k a (fromRationalK k 1)
 
 -- |The type of constructible real numbers.
 data Construct where
@@ -400,6 +407,9 @@ Evaluate a floating-point approximation for a constructible number.
 
 To improve numerical stability, addition of numbers with different
 signs is avoided using quadratic conjugation.
+
+>>> fromConstruct $ sum (map sqrt [7, 14, 39, 70, 72, 76, 85]) - sum (map sqrt [13, 16, 46, 55, 67, 73, 79])
+1.8837969820815017e-19
 -}
 fromConstruct :: Floating a => Construct -> a
 fromConstruct (C k a) = fromConstructK k a
