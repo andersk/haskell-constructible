@@ -248,11 +248,13 @@ deconstructK (Sqrt k r) (SqrtElt a b)
   | otherwise = Right (C k a, C k b, C k r)
 
 {- |
-Deconstruct a constructible number as either a 'Rational', or a triple
-@(a, b, r)@ of simpler constructible numbers representing @a + b*sqrt
-r@ (with @b /= 0@ and @r > 0@).  Recursively calling 'deconstruct' on
-all triples will yield a finite tree that terminates in 'Rational'
-leaves.  Note that two constructible numbers that compare as equal may
+Deconstruct a rational constructible number as a 'Rational', or an
+irrational constructible number as a triple @(a, b, r)@ of simpler
+constructible numbers representing @a + b*sqrt r@ (with @b /= 0@ and
+@r > 0@).  Recursively calling 'deconstruct' on all triples will yield
+a finite tree that terminates in 'Rational' leaves.
+
+Note that two constructible numbers that compare as equal may
 deconstruct in different ways.
 -}
 deconstruct :: Construct -> Either Rational (Construct, Construct, Construct)
