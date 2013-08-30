@@ -183,7 +183,7 @@ negateS, sqrtS :: (Int -> ShowS) -> Int -> ShowS
 (-!), (+!), (*!), (/!) :: (Int -> ShowS) -> (Int -> ShowS) -> Int -> ShowS
 infixl 6 +!, -!
 infixl 7 *!, /!
-negateS s d = showParen (d > 6) $ showChar '-' . s 6
+negateS s d = showParen (d > 6) $ showChar '-' . s 7
 (+!) s1 s2 d = showParen (d > 6) $ s1 6 . showString " + " . s2 7
 (-!) s1 s2 d = showParen (d > 6) $ s1 6 . showString " - " . s2 7
 (*!) s1 s2 d = showParen (d > 7) $ s1 7 . showChar '*' . s2 8
