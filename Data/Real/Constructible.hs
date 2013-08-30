@@ -351,8 +351,7 @@ instance Floating Construct where
   log = throw (Unconstructible "log")
   a ** b = go (numerator b') (denominator b') where
     b' = toRational b
-    go p q = let (n, p') = divMod p q in
-      (if n >= 0 then a^n else 1/a^(-n))*go' p' q
+    go p q = let (n, p') = divMod p q in a^^n*go' p' q
     go' 0 _ = 1
     go' p q = case divMod q 2 of
       (q', 0) -> sqrt (go p q')
