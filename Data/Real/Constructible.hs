@@ -63,8 +63,8 @@ import Text.Read.Lex (numberToInteger)
 data FieldShape = QShape | SqrtShape !FieldShape deriving Show
 
 data Field k where
-  Q :: Field QShape
-  Sqrt :: !(Field k) -> !(Elt k) -> Field (SqrtShape k)
+  Q :: Field 'QShape
+  Sqrt :: !(Field k) -> !(Elt k) -> Field ('SqrtShape k)
 
 instance Show (Field k) where
   showsPrec _ Q = showString "Q"
@@ -72,9 +72,9 @@ instance Show (Field k) where
     showParen (d > 9) $ showsPrec 9 k . showString "[sqrt " . showsPrecK k 10 r . showString "]"
 
 type family Elt (k :: FieldShape)
-type instance Elt QShape = Rational
+type instance Elt 'QShape = Rational
 data SqrtElt k = SqrtZero | SqrtElt !(Elt k) !(Elt k)
-type instance Elt (SqrtShape k) = SqrtElt k
+type instance Elt ('SqrtShape k) = SqrtElt k
 
 sqrtElt :: Field k -> Elt k -> Elt k -> SqrtElt k
 sqrtElt k a b | isZeroK k a && isZeroK k b = SqrtZero
