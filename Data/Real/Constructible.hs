@@ -385,7 +385,7 @@ instance RealFrac Construct where
 
 instance Enum Construct where
   succ = (+ 1)
-  pred = (subtract 1)
+  pred = subtract 1
   toEnum = fromIntegral
   fromEnum = fromInteger . truncate
   enumFrom n = n `seq` (n : enumFrom (n + 1))
