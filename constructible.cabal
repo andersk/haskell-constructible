@@ -19,10 +19,10 @@ cabal-version:       >=1.8
 library
   exposed-modules:     Data.Real.Constructible
   build-depends:
-    arithmoi >=0.1,
     base ==4.*,
     binary-search >=0.0,
-    complex-generic >=0.1
+    complex-generic >=0.1,
+    integer-roots >=1.0
   ghc-options:       -Wall
 
 source-repository head
