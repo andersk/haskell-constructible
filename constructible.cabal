@@ -1,5 +1,5 @@
 name:                constructible
-version:             0.1.0.1
+version:             0.1.1
 synopsis:            Exact computation with constructible real numbers
 description:
   The constructible reals are the subset of the real numbers that can
