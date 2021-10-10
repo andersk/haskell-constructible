@@ -261,8 +261,8 @@ constructible numbers representing @a + b*sqrt r@ (with @b /= 0@ and
 @r > 0@).  Recursively calling 'deconstruct' on all triples will yield
 a finite tree that terminates in 'Rational' leaves.
 
-Note that two constructible numbers that compare as equal may
-deconstruct in different ways.
+Note that two irrational constructible numbers that compare as equal
+may deconstruct in different ways.
 -}
 deconstruct :: Construct -> Either Rational (Construct, Construct, Construct)
 deconstruct (C k a) = deconstructK k a
