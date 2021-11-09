@@ -96,6 +96,13 @@ mulK Sqrt{} _ SqrtZero = SqrtZero
 mulK (Sqrt k r) (SqrtElt a b) (SqrtElt c d) =
   SqrtElt (addK k (mulK k a c) (mulK k r (mulK k b d))) (addK k (mulK k a d) (mulK k b c))
 
+sqK :: Field k -> Elt k -> Elt k
+sqK Q a = a*a
+sqK Sqrt{} SqrtZero = SqrtZero
+sqK (Sqrt k r) (SqrtElt a b) =
+  let c = mulK k a b
+  in SqrtElt (addK k (sqK k a) (mulK k r (sqK k b))) (addK k c c)
+
 subK :: Field k -> Elt k -> Elt k -> Elt k
 subK Q a b = a - b
 subK k@Sqrt{} SqrtZero a = negateK k a
@@ -123,7 +130,7 @@ recipK :: Field k -> Elt k -> Elt k
 recipK Q a = recip a
 recipK Sqrt{} SqrtZero = throw DivideByZero
 recipK (Sqrt k r) (SqrtElt a b) =
-  let c = recipK k (subK k (mulK k a a) (mulK k r (mulK k b b)))
+  let c = recipK k (subK k (sqK k a) (mulK k r (sqK k b)))
   in SqrtElt (mulK k a c) (mulK k (negateK k b) c)
 
 eqK :: Field k -> Elt k -> Elt k -> Bool
@@ -150,8 +157,8 @@ sgnK (Sqrt k r) (SqrtElt a b) = case (sgnK k a, sgnK k b) of
   (EQ, o) -> o
   (GT, GT) -> GT
   (LT, LT) -> LT
-  (GT, LT) -> sgnK k (subK k (mulK k a a) (mulK k r (mulK k b b)))
-  (LT, GT) -> sgnK k (subK k (mulK k r (mulK k b b)) (mulK k a a))
+  (GT, LT) -> sgnK k (subK k (sqK k a) (mulK k r (sqK k b)))
+  (LT, GT) -> sgnK k (subK k (mulK k r (sqK k b)) (sqK k a))
 
 zeroK :: Field k -> Elt k
 zeroK Q = 0
@@ -167,7 +174,7 @@ sqrtK Sqrt{} SqrtZero = return SqrtZero
 sqrtK (Sqrt k r) (SqrtElt a b)
   | isZeroK k b = sqrtLift k <$> sqrtK k a <|> SqrtElt (zeroK k) <$> sqrtK k (divK k a r)
   | otherwise = do
-    n <- sqrtK k $ subK k (mulK k a a) (mulK k r (mulK k b b))
+    n <- sqrtK k $ subK k (sqK k a) (mulK k r (sqK k b))
     let half = fromRationalK k (1 % 2)
         p = mulK k half (addK k a n)
         q = mulK k half b
@@ -228,8 +235,8 @@ fromRatioK (Sqrt k r) = er where
     where
       a = subK k (mulK k a0 a1) (mulK k r (mulK k b0 b1))
       b = subK k (mulK k b0 a1) (mulK k a0 b1)
-      n0 = subK k (mulK k a0 a0) (mulK k r (mulK k b0 b0))
-      n1 = subK k (mulK k a1 a1) (mulK k r (mulK k b1 b1))
+      n0 = subK k (sqK k a0) (mulK k r (sqK k b0))
+      n1 = subK k (sqK k a1) (mulK k r (sqK k b1))
       x1 = e a n1 + e b n1*s
       x2 = recip $ e a n0 - e b n0*s
 
